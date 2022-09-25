@@ -8,12 +8,15 @@ using namespace std;
 
 
 lli powMod(lli arg, lli pow, lli mod ){
+    arg%=mod;
+
     if (pow == 0) return 1;
-    lli z = powMod(arg, pow / 2, mod);
+    lli z = powMod(arg  %mod, (pow / 2)  %mod, mod);
+    z%=mod;
     if (pow % 2 == 0)
-        return (z*z) % mod;
+        return (z  %mod*z  %mod) % mod;
   else
-    return (arg*z*z) % mod;
+    return (arg  %mod*z  %mod*z  %mod) % mod;
 }
 int gcdmodif(lli &a, lli &b, lli &x){
     x = std::min(a,b);
@@ -78,18 +81,16 @@ bool check_prime(lli n) {
 }
 void findPrimefactors(unordered_set<lli> &s, lli n)
 {
-    // Print the number of 2s that divide n
+
     while (n%2 == 0)
     {
         s.insert(2);
         n = n/2;
     }
- 
-    // n must be odd at this point. So we can skip
-    // one element (Note i = i +2)
+
     for (lli i = 3; i <= sqrt(n); i = i + 2)
     {
-        // While i divides n, print i and divide n
+
         while (n%i == 0)
         {
             s.insert(i);
@@ -97,35 +98,27 @@ void findPrimefactors(unordered_set<lli> &s, lli n)
         }
     }
  
-    // This condition is to handle the case when
-    // n is a prime number greater than 2
+
     if (n > 2)
         s.insert(n);
 }
- 
-// Function to find smallest primitive root of n
+
 lli findPrimitive(lli n)
 {
     unordered_set<lli> s;
- 
-    // Check if n is prime or not
-    if (check_prime(n)==false)
+
+    if (!check_prime(n))
         return -1;
  
-    // Find value of Euler Totient function of n
-    // Since n is a prime number, the value of Euler
-    // Totient function is n-1 as there are n-1
-    // relatively prime numbers.
+
     lli phi = n - 1;
  
     // Find prime factors of phi and store in a set
     findPrimefactors(s, phi);
- 
-    // Check for every number from 2 to phi
+
     for (lli r=2; r <= phi; r++)
     {
-        // Iterate through all prime factors of phi.
-        // and check if we found a power with value 1
+
         bool flag = false;
         for (auto it = s.begin(); it != s.end(); it++)
         {
@@ -143,24 +136,33 @@ lli findPrimitive(lli n)
 
     return -1;
 }
-int dh(lli p, lli g, lli x, lli a, lli y, lli b , lli ka, lli kb){
+int dh(lli p){
+    lli g,x,a, y,  b , ka,  kb;
 if(!check_prime(p)){
     return 0;
 }
 g=findPrimitive(p);
+g%p;
 
    printf("The key : %lld\n", p);
    a=rand()%(p-1 + 1) + 1;
+    a=3;
+   a%=p;
     printf("The private key a for Alice : %lld\n", a);
-    x = powMod(g, a, p); 
+    x = powMod(g%p, a%p, p);
+
   
   b=rand()%(p-1 + 1) + 1;
+  b=32;
+  b%=p;
     printf("The private key b for Bob : %lld\n\n", b);
-    y = powMod(g, b, p); 
-    ka = powMod(y, a, p); 
-    kb = powMod(x, b, p); 
-     
-   cout<<endl<<ka<<endl<<kb;
+    y = powMod(g%p, b%p, p)%p ;
+    ka = powMod(y%p, a%p, p)%p;
+    kb = powMod(x%p, b%p, p)%p;
+    std::bitset<16> kab(ka);
+    std::bitset<16> kbb(kb);
+   cout<<endl<<ka<<endl<<kb<<endl;
+   cout<<kbb<<endl<<kab;
 }
 int test_res(int arg){
     return arg*(arg*-1);
