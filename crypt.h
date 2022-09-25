@@ -1,6 +1,7 @@
 #ifndef PARENT_H
 #define PARENT_H
 #include <cmath>
+#include <bitset>
 #include <random>
 #include<bits/stdc++.h>
 using lli = long long int;
@@ -163,6 +164,7 @@ g%p;
     std::bitset<16> kbb(kb);
    cout<<endl<<ka<<endl<<kb<<endl;
    cout<<kbb<<endl<<kab;
+   cout<<"\nDIFF="<<kab.to_ullong() -kbb.to_ullong();
 }
 int test_res(int arg){
     return arg*(arg*-1);
